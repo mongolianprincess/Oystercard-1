@@ -9,7 +9,7 @@ describe 'Feature test  - oystercard challenge' do
 
       describe '#top_up' do
         it 'balance increases by top up amount' do
-          expect {subject.top_up 1}.to change{subject.balance }.by 1
+          expect {subject.top_up 1}.to change{subject.balance}.by 1
         end
       end
 end
