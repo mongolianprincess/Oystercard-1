@@ -14,12 +14,12 @@ describe Oystercard do
       expect { subject.top_up(max_balance)}.to raise_error "Over maximum balance of #{Oystercard::MAXIMUM_BALANCE}"
     end
   end
-  describe '#deduct'do
-    it 'subtracts journey fare from balance' do
-      subject.top_up(30)
-      expect { subject.deduct(4.5) }. to change{ subject.balance }.by -4.5
-    end
-  end
+  # describe '#deduct'do
+  #   it 'subtracts journey fare from balance' do
+  #     subject.top_up(30)
+  #     expect { subject.deduct(4.5) }. to change{ subject.balance }.by -4.5
+  #   end
+  # end
   describe '#in_journey' do
     it  {expect(subject).not_to be_in_journey}
   end
@@ -28,6 +28,10 @@ describe Oystercard do
     it 'checks minimum balance when touch in'do
       subject.balance = Oystercard::MINIMUM_BALANCE - 1
       expect {subject.touch_in}.to raise_error "you have insufficient funds of #{subject.balance}"
+    end
+
+    it 'check balance changes at touch out by minimum balance' do
+      expect { subject.touch_out }. to change{ subject.balance }.by -(Oystercard::MINIMUM_BALANCE)
     end
 
   context 'Balance Query before touch in and out' do
