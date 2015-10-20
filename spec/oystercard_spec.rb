@@ -24,6 +24,13 @@ describe Oystercard do
     it  {expect(subject).not_to be_in_journey}
   end
 
+  describe '#minimum balance' do
+    it 'checks minimum balance when touch in'do
+      balance = 0.99#Oystercard::MINIMUM_BALANCE -1 
+      expect {subject.touch_in}.to raise_error "you have insufficient funds of #{balance}"
+    end
+  end
+
   context 'Balance Query before touch in and out' do
     before 'checks balance before use' do
       subject.top_up(Oystercard::MAXIMUM_BALANCE)
