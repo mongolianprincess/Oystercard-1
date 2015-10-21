@@ -1,6 +1,9 @@
 require 'oystercard'
 
 describe Oystercard do
+
+  let(:max) {Oystercard::MAX_BALANCE}
+  let(:min) {Oystercard::MIN_FARE}
   it 'balance is zero when initialized' do
     expect(subject.balance).to eq 0
   end
@@ -10,48 +13,42 @@ describe Oystercard do
       expect {subject.top_up 1}.to change{subject.balance }.by 1
     end
     it 'error if over maximum balance' do
-      max_balance = Oystercard::MAXIMUM_BALANCE + 1
-      expect { subject.top_up(max_balance)}.to raise_error "Over maximum balance of #{Oystercard::MAXIMUM_BALANCE}"
+      error = "Over maximum balance of #{max}"
+      expect { subject.top_up(max + 1)}.to raise_error error
     end
   end
-  # describe '#deduct'do
-  #   it 'subtracts journey fare from balance' do
-  #     subject.top_up(30)
-  #     expect { subject.deduct(4.5) }. to change{ subject.balance }.by -4.5
-  #   end
-  # end
+
   describe '#in_journey' do
     it  {expect(subject).not_to be_in_journey}
   end
 
-
-    it 'checks minimum balance when touch in'do
-      subject.balance = Oystercard::MINIMUM_BALANCE - 1
-      expect {subject.touch_in}.to raise_error "you have insufficient funds of #{subject.balance}"
+    it 'checks you cant touch in with less than minimum balance' do
+      error2 = "you have insufficient funds of: £#{subject.balance}"
+      expect {subject.touch_in}.to raise_error error2
     end
 
     it 'check balance changes at touch out by minimum balance' do
-      expect { subject.touch_out }. to change{ subject.balance }.by -(Oystercard::MINIMUM_BALANCE)
+      expect { subject.touch_out }. to change{ subject.balance }.by(-min)
     end
 
   context 'Balance Query before touch in and out' do
     before 'checks balance before use' do
-      subject.top_up(Oystercard::MAXIMUM_BALANCE)
+      subject.top_up(max)
     end
 
-        describe '#touch_in' do
-          it 'checks person can touch in and change card journey status' do
-            subject.touch_in
-            expect(subject.in_journey).to eq true
-          end
-        end
+    describe '#touch_in' do
+      it 'touching in changes journey status to be in journey' do
+        subject.touch_in
+        expect(subject.in_journey).to eq true
+      end
+    end
 
-        describe '#touch_out' do
-          it 'checks person can touch out and change card journey type' do
-            subject.touch_out
-            expect(subject.in_journey).to eq false
-          end
-        end
-
+    describe '#touch_out' do
+      it 'touching out changes journey status to not be in journey' do
+        subject.touch_out
+        expect(subject.in_journey).to eq false
+      end
+    end
   end
+
 end

@@ -15,8 +15,9 @@ describe 'Feature test  - oystercard challenge' do
 
       describe '#max_balance' do
         it 'error if over maximum balance' do
-          max_balance = Oystercard::MAXIMUM_BALANCE
-          expect {subject.top_up(max_balance +1)}.to raise_error "Over maximum balance of #{max_balance}"
+          max_balance = Oystercard::MAX_BALANCE
+          error = "Over maximum balance of #{max_balance}"
+          expect {subject.top_up(max_balance +1)}.to raise_error error
         end
 
       end
