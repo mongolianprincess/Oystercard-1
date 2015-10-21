@@ -4,6 +4,8 @@ describe Oystercard do
 
   let(:max) {Oystercard::MAX_BALANCE}
   let(:min) {Oystercard::MIN_FARE}
+  let(:station) { double(:station) }
+
   it 'balance is zero when initialized' do
     expect(subject.balance).to eq 0
   end
@@ -24,7 +26,7 @@ describe Oystercard do
 
     it 'checks you cant touch in with less than minimum balance' do
       error2 = "you have insufficient funds of: £#{subject.balance}"
-      expect {subject.touch_in}.to raise_error error2
+      expect {subject.touch_in(station)}.to raise_error error2
     end
 
     it 'check balance changes at touch out by minimum balance' do
@@ -38,17 +40,31 @@ describe Oystercard do
 
     describe '#touch_in' do
       it 'touching in changes journey status to be in journey' do
-        subject.touch_in
-        expect(subject.in_journey).to eq true
+        subject.touch_in(station)
+        expect(subject.in_journey?).to eq true
       end
     end
 
     describe '#touch_out' do
       it 'touching out changes journey status to not be in journey' do
         subject.touch_out
-        expect(subject.in_journey).to eq false
+        expect(subject.in_journey?).to eq false
       end
     end
   end
 
+  context '#journey log' do
+      before(:each) do
+        subject.top_up(50)
+        subject.touch_in(station)
+      end
+    it {is_expected.to respond_to(:touch_in).with(1).argument}
+    it 'logs the staion at the start of journey' do
+      expect(subject.entry_station).to eq station
+    end
+    it 'forgets the entry station upon touching out' do
+      subject.touch_out
+      expect(subject.entry_station).to eq nil
+    end
+  end
 end
