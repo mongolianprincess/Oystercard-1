@@ -5,14 +5,14 @@ describe Oystercard do
   let(:max) {Oystercard::MAX_BALANCE}
   let(:min) {Oystercard::MIN_FARE}
   let(:station) { double(:station) }
-  let(:exit_station) {double(:exit_station)}
+  let(:exit_station) {double(:station)}
 
   it 'balance is zero when initialized' do
     expect(subject.balance).to eq 0
   end
 
   it 'checks an initial empty journey log is created' do
-    expect(subject.log).to eq Hash.new
+    expect(subject.log).to be_empty
   end
 
   describe '#top_up' do
@@ -35,7 +35,7 @@ describe Oystercard do
     end
 
     it 'check balance changes at touch out by minimum balance' do
-      expect { subject.touch_out(exit_station) }. to change{ subject.balance }.by(-min)
+      expect { subject.touch_out(exit_station) }.to change{ subject.balance }.by(-min)
     end
 
   context 'Balance Query before touch in and out' do
@@ -59,10 +59,12 @@ describe Oystercard do
   end
 
   context '#journey log' do
-      before(:each) do
-        subject.top_up(50)
-        subject.touch_in(station)
-      end
+    let(:output) { {:journey => [station, exit_station]} }
+
+    before(:each) do
+      subject.top_up(50)
+      subject.touch_in(station)
+    end
     it {is_expected.to respond_to(:touch_in).with(1).argument}
     it 'logs the staion at the start of journey' do
       expect(subject.entry_station).to eq station
@@ -70,7 +72,6 @@ describe Oystercard do
 
     it 'checks touching out logs the journey' do
       subject.touch_out(exit_station)
-      output = {:journey => [station, exit_station]}
       expect(subject.log).to eq output
     end
 

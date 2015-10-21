@@ -22,3 +22,6 @@ describe 'Feature test  - oystercard challenge' do
 
       end
 end
+
+
+rand(10) > 6 ? true : false
