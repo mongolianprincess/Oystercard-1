@@ -1,4 +1,5 @@
 require_relative 'station'
+require_relative 'journey'
 
 class Oystercard
 
@@ -12,7 +13,6 @@ class Oystercard
     @balance = balance
     @log = []
     @journey = {}
-    @journey_counter = 0
     @station = nil
   end
 
@@ -21,15 +21,11 @@ class Oystercard
     @balance += amount
   end
 
-  def in_journey?
-    @station ? true : false
-    # so you are in journey when the value isn't nil
-  end
-
   def touch_in(station)
     fail "you have insufficient funds, please top up by #{MIN_FARE}" if insufficient_balance?
     @journey[:entry_station] = station
     @station = station
+    # @journey.start_station station
   end
 
   def touch_out(station)
