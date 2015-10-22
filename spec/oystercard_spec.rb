@@ -5,7 +5,7 @@ describe Oystercard do
   let(:max) {Oystercard::MAX_BALANCE}
   let(:min) {Oystercard::MIN_FARE}
   let(:station) { double(:station) }
-  let(:exit_station) {double(:station)}
+
 
   it 'balance is zero when initialized' do
     expect(subject.balance).to eq 0
@@ -16,8 +16,9 @@ describe Oystercard do
   end
 
   describe '#top_up' do
+
     it 'balance increases by top up amount' do
-      expect {subject.top_up 1}.to change{subject.balance }.by 1
+      expect {subject.top_up 1}.to change{subject.balance}.by 1
     end
     it 'error if over maximum balance' do
       error = "Over maximum balance of #{max}"
@@ -26,61 +27,57 @@ describe Oystercard do
   end
 
   describe '#in_journey' do
+
     it  {expect(subject).not_to be_in_journey}
   end
 
-    it 'checks you cant touch in with less than minimum balance' do
-      error2 = "you have insufficient funds of: £#{subject.balance}"
-      expect {subject.touch_in(station)}.to raise_error error2
-    end
+  describe '#touch_in' do
 
-    it 'check balance changes at touch out by minimum balance' do
-      expect { subject.touch_out(exit_station) }.to change{ subject.balance }.by(-min)
-    end
+      before 'checks balance before use' do
+        subject.top_up(1)
+      end
 
-  context 'Balance Query before touch in and out' do
-    before 'checks balance before use' do
-      subject.top_up(max)
-    end
+      it 'checks you cant touch in with less than minimum balance' do
+        subject.touch_in(station)
+        subject.touch_out(station)
+        error2 = "you have insufficient funds, please top up by #{min}"
+        expect {subject.touch_in(station)}.to raise_error error2
+      end
 
-    describe '#touch_in' do
       it 'touching in changes journey status to be in journey' do
         subject.touch_in(station)
         expect(subject.in_journey?).to eq true
       end
-    end
-
-    describe '#touch_out' do
-      it 'touching out changes journey status to not be in journey' do
-        subject.touch_out(exit_station)
-        expect(subject.in_journey?).to eq false
-      end
-    end
   end
 
-  context '#journey log' do
-    let(:output) { {:journey => [station, exit_station]} }
+    describe '#touch_out' do
 
-    before(:each) do
-      subject.top_up(50)
-      subject.touch_in(station)
-    end
+      before(:each) do
+        subject.top_up(1)
+        subject.touch_in(station)
+      end
+
+      it 'check balance changes at touch out by minimum balance' do
+        expect { subject.touch_out(station) }.to change{ subject.balance }.by(-min)
+      end
+
+      it 'touching out changes journey status to not be in journey' do
+        subject.touch_out(station)
+        expect(subject.in_journey?).to eq false
+      end
+
+    let(:journey){ {:entry_station => station, :exit_station => station} }
+
     it {is_expected.to respond_to(:touch_in).with(1).argument}
-    it 'logs the staion at the start of journey' do
-      expect(subject.entry_station).to eq station
-    end
 
     it 'checks touching out logs the journey' do
-      subject.touch_out(exit_station)
-      expect(subject.log).to eq output
+      subject.touch_out(station)
+      expect(subject.log).to eq [journey]
     end
 
     it 'forgets the entry station upon touching out' do
-      subject.touch_out(exit_station)
-      expect(subject.entry_station).to eq nil
+      subject.touch_out(station)
+      expect(subject.station).to eq nil
     end
-
   end
-
-
 end
