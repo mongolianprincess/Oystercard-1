@@ -48,7 +48,7 @@ describe Oystercard do
         subject.touch_in(station)
         expect(subject.in_journey?).to eq true
       end
-  end
+    end
 
     describe '#touch_out' do
 
@@ -80,4 +80,6 @@ describe Oystercard do
       expect(subject.station).to eq nil
     end
   end
+
+
 end
