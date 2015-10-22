@@ -6,7 +6,6 @@ class Oystercard
   MAX_BALANCE = 90
   MIN_FARE = 1
 
-
   attr_reader :balance, :log, :station
 
   def initialize (balance = 0)

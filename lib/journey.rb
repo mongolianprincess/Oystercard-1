@@ -1,35 +1,32 @@
 class Journey
 
-attr_reader :journey, :station, :complete
+attr_reader :journey, :entry_station, :exit_station
 
 MIN_FARE = 1
 DEFAULT_PENALTY = 6
 
 def initialize(station=nil)
   @complete = false
-  @station = station
+  @entry_station = station
+  @exit_station = nil
 end
 
-def entry_station(station)
-  @station = station
+def start_journey(station=nil)
+  @entry_station = station
 end
 
-def exit_station(exit_station=nil)
-  @station = exit_station
-  @complete = true
+def end_journey(station=nil)
+  @exit_station = station
+  @complete = true if (@exit_station && @entry_station)
+  self
 end
 
 def complete?
-  
+  @complete
+end
 
 def fare
-  if @entry_station == nil && @exit_station != nil
-    DEFAULT_PENALTY
-  elsif @entry_station == nil && @exit_station != nil
-    DEFAULT_PENALTY
-  else
-  MIN_FARE
-  end
+  complete? ? MIN_FARE : DEFAULT_PENALTY
 end
 
 end
