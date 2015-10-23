@@ -11,6 +11,10 @@ def initialize(station)
   @exit_station
 end
 
+def start_journey(station)
+
+end
+
 def end_journey(station)
   @exit_station = station
   @complete = true if exit_station
