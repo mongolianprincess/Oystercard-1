@@ -5,20 +5,15 @@ attr_reader :journey, :entry_station, :exit_station
 MIN_FARE = 1
 DEFAULT_PENALTY = 6
 
-def initialize(station=nil)
+def initialize(station)
   @complete = false
   @entry_station = station
-  @exit_station = nil
+  @exit_station
 end
 
-def start_journey(station=nil)
-  @entry_station = station
-end
-
-def end_journey(station=nil)
+def end_journey(station)
   @exit_station = station
-  @complete = true if (@exit_station && @entry_station)
-  self
+  @complete = true if exit_station
 end
 
 def complete?
