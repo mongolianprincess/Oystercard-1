@@ -12,6 +12,7 @@ class Oystercard
     @balance = balance
     @log = []
     @journey = {}
+    #@journey = Journey.new
     @station = nil
   end
 
@@ -24,18 +25,28 @@ class Oystercard
     fail "you have insufficient funds, please top up by #{MIN_FARE}" if insufficient_balance?
     @journey[:entry_station] = station
     @station = station
-    # @journey.start_station station
+    # @journey = @journey.start_station(station)
   end
 
   def touch_out(station)
     deduct MIN_FARE
-    # journey_counter += 1
-    # key =
+    #@journey = @journey.end_journey(station)
+    #@log << @journey
     @journey[:exit_station] = station
     @log << @journey
     @station = nil
   end
 
+=begin
+  def balance
+    @balance -= @journey.fare
+  end
+
+  def log
+    @log << @journey
+  end
+
+=end
   private
 
   def full?(amount)
